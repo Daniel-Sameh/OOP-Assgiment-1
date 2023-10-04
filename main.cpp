@@ -14,11 +14,13 @@
 
 using namespace std;
 unsigned char image[SIZE][SIZE];
+unsigned char image [SIZE][SIZE};
 
 void loadImage ();
 void saveImage ();
 void ConvertBW ();
-
+void darken();
+void merge();
 void flipImage(char direction);
 
 int filter;
@@ -48,7 +50,12 @@ int main()
             cin>>fl;
             flipImage(fl);
         }
-    }
+        else if(filter==5){
+            darken();
+        }
+        else if(filter==6){
+            merge()
+        }
 
     saveImage();
     return 0;
@@ -141,6 +148,7 @@ void flipImage(char direction) {
         */
 
     }
+}
 void Darken() {
     for (int i = 0; i < SIZE; i++) {
         for (int j = 0; j< SIZE; j++) {
@@ -157,3 +165,4 @@ void Merge() {
     }
 
 }
+
