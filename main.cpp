@@ -14,13 +14,15 @@
 
 using namespace std;
 unsigned char image[SIZE][SIZE];
-unsigned char merge [SIZE][SIZE};
+unsigned char merge [SIZE][SIZE];
+char m;
 
 void loadImage ();
 void loadMergeImage ();
 void saveImage ();
 void ConvertBW ();
 void Darken();
+void Lighten();
 void Merge();
 void flipImage(char direction);
 
@@ -44,7 +46,8 @@ int main()
         }else if (filter==2){
 
         }else if (filter==3){
-
+            loadMergeImage ();
+            Merge();
         }else if (filter==4){
             cout<<"Flip (h)orizontally or (v)ertically ? ";
             char fl;
@@ -52,17 +55,24 @@ int main()
             flipImage(fl);
         }
         else if(filter==5){
+            cout<<"if you want to darken the image press d and if you want to lighten it press l:";
+            cin>>m;
+            if(m=='d'){
             Darken();
+            }
+            else{
+            Lighten();
+            }
         }
         else if(filter==6){
-            Merge();
+            
         }
 
     saveImage();
     return 0;
 }
 
-
+}
 
 //_________________________________________
 void loadImage () {
@@ -154,6 +164,14 @@ void Darken() {
     for (int i = 0; i < SIZE; i++) {
         for (int j = 0; j< SIZE; j++) {
             image[i][j]-=0.5*image[i][j];
+        }
+    }
+}
+void Lighten(){
+    for (int i = 0; i < SIZE; i++) {
+        for (int j = 0; j < SIZE; j++) {
+            image[i][j]=image[i][j]/2;
+            image[i][j]+=127;
         }
     }
 }
