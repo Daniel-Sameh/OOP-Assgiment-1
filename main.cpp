@@ -14,9 +14,10 @@
 
 using namespace std;
 unsigned char image[SIZE][SIZE];
-unsigned char image [SIZE][SIZE};
+unsigned char merge [SIZE][SIZE};
 
 void loadImage ();
+void loadMergeImage ();
 void saveImage ();
 void ConvertBW ();
 void Darken();
@@ -156,7 +157,17 @@ void Darken() {
         }
     }
 }
+void loadMergeImage () {
+    char imageFileName[100];
 
+
+    cout << "Please enter the name of  image file to merge with: ";
+    cin >> imageFileName;
+
+
+    strcat(imageFileName, ".bmp");
+    readGSBMP(imageFileName, merge);
+}
 void Merge() {
     for (int i = 0; i < SIZE; i++) {
         for (int j = 0; j< SIZE; j++) {
