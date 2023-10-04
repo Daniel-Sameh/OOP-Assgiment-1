@@ -141,5 +141,19 @@ void flipImage(char direction) {
         */
 
     }
+void Darken() {
+    for (int i = 0; i < SIZE; i++) {
+        for (int j = 0; j< SIZE; j++) {
+            image[i][j]-=0.5*image[i][j];
+        }
+    }
+}
+
+void Merge() {
+    for (int i = 0; i < SIZE; i++) {
+        for (int j = 0; j< SIZE; j++) {
+           image[i][j]=(image[i][j]+merge[i][j])/2;
+        }
+    }
 
 }
