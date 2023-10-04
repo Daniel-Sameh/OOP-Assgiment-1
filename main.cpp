@@ -55,7 +55,7 @@ int main()
             Darken();
         }
         else if(filter==6){
-            Merge()
+            Merge();
         }
 
     saveImage();
