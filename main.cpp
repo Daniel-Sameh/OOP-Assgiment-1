@@ -19,8 +19,8 @@ unsigned char image [SIZE][SIZE};
 void loadImage ();
 void saveImage ();
 void ConvertBW ();
-void darken();
-void merge();
+void Darken();
+void Merge();
 void flipImage(char direction);
 
 int filter;
@@ -51,10 +51,10 @@ int main()
             flipImage(fl);
         }
         else if(filter==5){
-            darken();
+            Darken();
         }
         else if(filter==6){
-            merge()
+            Merge()
         }
 
     saveImage();
