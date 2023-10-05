@@ -191,8 +191,6 @@ void flipImage(char direction) {
     }
 }
 //_________________________________________
-
-//_________________________________________
 void rotateImage(int a) {
     for (int x = 0; x < a; ++x) {
         for (int i = 0; i < SIZE; ++i) {
