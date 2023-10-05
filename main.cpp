@@ -22,12 +22,12 @@ void loadImage ();
 void loadMergeImage ();
 void saveImage ();
 void ConvertBW ();
-void invert();
+void invertImage();
 void Darken();
 void Lighten();
 void Merge();
 void flipImage(char direction);
-void rotate(int a);
+void rotateImage(int a);
 
 int filter;
 int main()
@@ -47,7 +47,7 @@ int main()
         }else if (filter==1){
             ConvertBW();
         }else if (filter==2){
-            invert();
+            invertImage();
         }else if (filter==3){
             loadMergeImage ();
             Merge();
@@ -71,7 +71,7 @@ int main()
             cout << "Choose (1) tp rotate 90 degrees or (2) to rotate 180 degrees or (3) to rotate 270 degrees: ";
             int angle = 0;
             cin >> angle;
-            rotate(angle);
+            rotateImage(angle);
         }
     }
     saveImage();
@@ -112,6 +112,14 @@ void ConvertBW() {
                 image[i][j] = 255;
             else
                 image[i][j] = 0;
+        }
+    }
+}
+//_________________________________________
+void invertImage() {
+    for (int i = 0; i < SIZE; ++i) {
+        for (int j = 0; j < SIZE; ++j) {
+            image[i][j] = 255 - image[i][j];
         }
     }
 }
@@ -183,36 +191,9 @@ void flipImage(char direction) {
     }
 }
 //_________________________________________
-void Darken() {
-    for (int i = 0; i < SIZE; i++) {
-        for (int j = 0; j< SIZE; j++) {
-            image[i][j]-=0.5*image[i][j];
-        }
-    }
-}
-void Lighten(){
-    for (int i = 0; i < SIZE; i++) {
-        for (int j = 0; j < SIZE; j++) {
-            image[i][j]=image[i][j]/2;
-            image[i][j]+=127;
-        }
-    }
-}
-//----------------------------------------
-void invert() {
-    for (int i = 0; i < SIZE; ++i) {
-        for (int j = 0; j < SIZE; ++j) {
-            if (image[i][j] == 0)
-                image[i][j] = 255;
-            else if (image[i][j] == 255)
-                image[i][j] = 0;
-            else
-                image[i][j] = 255 - image[i][j];
-        }
-    }
-}
-//------------------------------------------
-void rotate(int a) {
+
+//_________________________________________
+void rotateImage(int a) {
     for (int x = 0; x < a; ++x) {
         for (int i = 0; i < SIZE; ++i) {
             for (int j = 0; j < SIZE; ++j) {
@@ -225,6 +206,22 @@ void rotate(int a) {
             for (int j = 0; j < SIZE; ++j) {
                 image[i][j] = image1[i][j];
             }
+        }
+    }
+}
+//_________________________________________
+void Darken() {
+    for (int i = 0; i < SIZE; i++) {
+        for (int j = 0; j< SIZE; j++) {
+            image[i][j]-=0.5*image[i][j];
+        }
+    }
+}
+void Lighten(){
+    for (int i = 0; i < SIZE; i++) {
+        for (int j = 0; j < SIZE; j++) {
+            image[i][j]=image[i][j]/2;
+            image[i][j]+=127;
         }
     }
 }
