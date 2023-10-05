@@ -1,7 +1,7 @@
 // Program: PerPixel.cpp
-// Purpose: Demonstrate use of bmplip for handling
-//          bmp colored and grayscale images
-//          Program load a gray image and store in another file
+// Purpose: A program that manipulate the given
+//          bmp image and ask the user for the
+//          desired filter and saves the image at the end.
 // Author:  Daniel Sameh 20221050, Michael Rafaat Moussa 2022, Youssef Ehab 20220388
 // Date:    4 October 2023
 // Version: 1.0
@@ -58,20 +58,18 @@ int main()
             cout<<"if you want to darken the image press d and if you want to lighten it press l:";
             cin>>m;
             if(m=='d'){
-            Darken();
+                Darken();
             }
             else{
-            Lighten();
+                Lighten();
             }
         }
         else if(filter==6){
-            
-        }
 
+        }
+    }
     saveImage();
     return 0;
-}
-
 }
 
 //_________________________________________
@@ -104,12 +102,32 @@ void saveImage () {
 void ConvertBW() {
     for (int i = 0; i < SIZE; i++) {
         for (int j = 0; j< SIZE; j++) {
-            if (image[i][j] > 127)
+            if (image[i][j] >= 127)
                 image[i][j] = 255;
             else
                 image[i][j] = 0;
         }
     }
+}
+//_________________________________________
+void loadMergeImage () {
+    char imageFileName[100];
+
+
+    cout << "Please enter the name of image file to merge with: ";
+    cin >> imageFileName;
+
+
+    strcat(imageFileName, ".bmp");
+    readGSBMP(imageFileName, merge);
+}
+void Merge() {
+    for (int i = 0; i < SIZE; i++) {
+        for (int j = 0; j< SIZE; j++) {
+            image[i][j]=(image[i][j]+merge[i][j])/2;
+        }
+    }
+
 }
 //_________________________________________
 void flipImage(char direction) {
@@ -146,8 +164,6 @@ void flipImage(char direction) {
             }
         }
 
-
-
         /*
         * 00  01  02
         * 10  11  12
@@ -160,6 +176,7 @@ void flipImage(char direction) {
 
     }
 }
+//_________________________________________
 void Darken() {
     for (int i = 0; i < SIZE; i++) {
         for (int j = 0; j< SIZE; j++) {
@@ -174,24 +191,5 @@ void Lighten(){
             image[i][j]+=127;
         }
     }
-}
-void loadMergeImage () {
-    char imageFileName[100];
-
-
-    cout << "Please enter the name of  image file to merge with: ";
-    cin >> imageFileName;
-
-
-    strcat(imageFileName, ".bmp");
-    readGSBMP(imageFileName, merge);
-}
-void Merge() {
-    for (int i = 0; i < SIZE; i++) {
-        for (int j = 0; j< SIZE; j++) {
-           image[i][j]=(image[i][j]+merge[i][j])/2;
-        }
-    }
-
 }
 
