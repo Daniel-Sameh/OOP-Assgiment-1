@@ -23,8 +23,7 @@ void loadMergeImage ();
 void saveImage ();
 void ConvertBW ();
 void invertImage();
-void Darken();
-void Lighten();
+void darken_or_lighten(char x);
 void Merge();
 void flipImage(char direction);
 void rotateImage(int a);
@@ -58,14 +57,9 @@ int main()
             flipImage(fl);
         }
         else if(filter==5){
-            cout<<"if you want to darken the image press d and if you want to lighten it press l:";
+           cout<<"if you want to darken the image press d and if you want to lighten it press l:";
             cin>>m;
-            if(m=='d'){
-                Darken();
-            }
-            else{
-                Lighten();
-            }
+            darken_or_lighten(m);
         }
         else if(filter==6){
             cout << "Choose (1) tp rotate 90 degrees or (2) to rotate 180 degrees or (3) to rotate 270 degrees: ";
@@ -208,18 +202,23 @@ void rotateImage(int a) {
     }
 }
 //_________________________________________
-void Darken() {
-    for (int i = 0; i < SIZE; i++) {
-        for (int j = 0; j< SIZE; j++) {
-            image[i][j]-=0.5*image[i][j];
+void darken_or_lighten(char x) {
+    if (x == 'd') {
+        for (int i = 0; i < SIZE; ++i) {
+            for (int j = 0; j < SIZE; ++j) {
+                image[i][j] -= (unsigned char) (image[i][j] * 0.5);
+            }
         }
     }
-}
-void Lighten(){
-    for (int i = 0; i < SIZE; i++) {
-        for (int j = 0; j < SIZE; j++) {
-            image[i][j]=image[i][j]/2;
-            image[i][j]+=127;
+    if (x == 'l') {
+        for (int i = 0; i < SIZE; ++i) {
+            for (int j = 0; j < SIZE; ++j) {
+                if (image[i][j]==0){
+                    image[i][j]=127;
+                } else{
+                    image[i][j]=(255+image[i][j])/2;
+                }
+            }
         }
     }
 }
