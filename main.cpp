@@ -2,7 +2,7 @@
 // Purpose: A program that manipulate the given
 //          bmp image and ask the user for the
 //          desired filter and saves the image at the end.
-// Author:  Daniel Sameh 20221050, Michael Rafaat Moussa 2022, Youssef Ehab 20220388
+// Author:  Daniel Sameh 20221050, Michael Reda Moussa 20220517, Youssef Ehab 20220388
 // Date:    4 October 2023
 // Version: 1.0
 
@@ -14,6 +14,7 @@
 
 using namespace std;
 unsigned char image[SIZE][SIZE];
+unsigned char image1[SIZE][SIZE];
 unsigned char merge [SIZE][SIZE];
 char m;
 
@@ -21,10 +22,12 @@ void loadImage ();
 void loadMergeImage ();
 void saveImage ();
 void ConvertBW ();
+void invert();
 void Darken();
 void Lighten();
 void Merge();
 void flipImage(char direction);
+void rotate(int a);
 
 int filter;
 int main()
@@ -44,7 +47,7 @@ int main()
         }else if (filter==1){
             ConvertBW();
         }else if (filter==2){
-
+            invert();
         }else if (filter==3){
             loadMergeImage ();
             Merge();
@@ -65,7 +68,10 @@ int main()
             }
         }
         else if(filter==6){
-
+            cout << "Choose (1) tp rotate 90 degrees or (2) to rotate 180 degrees or (3) to rotate 270 degrees: ";
+            int angle = 0;
+            cin >> angle;
+            rotate(angle);
         }
     }
     saveImage();
@@ -192,4 +198,33 @@ void Lighten(){
         }
     }
 }
-
+//----------------------------------------
+void invert() {
+    for (int i = 0; i < SIZE; ++i) {
+        for (int j = 0; j < SIZE; ++j) {
+            if (image[i][j] == 0)
+                image[i][j] = 255;
+            else if (image[i][j] == 255)
+                image[i][j] = 0;
+            else
+                image[i][j] = 255 - image[i][j];
+        }
+    }
+}
+//------------------------------------------
+void rotate(int a) {
+    for (int x = 0; x < a; ++x) {
+        for (int i = 0; i < SIZE; ++i) {
+            for (int j = 0; j < SIZE; ++j) {
+                int temp = image[i][j];
+                image[i][j] = image1[j][SIZE - i];
+                image1[j][SIZE - i] = temp;
+            }
+        }
+        for (int i = 0; i < SIZE; ++i) {
+            for (int j = 0; j < SIZE; ++j) {
+                image[i][j] = image1[i][j];
+            }
+        }
+    }
+}
