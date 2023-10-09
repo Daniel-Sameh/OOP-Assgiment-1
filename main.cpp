@@ -27,9 +27,9 @@ void loadMergeImage ();
 void saveImage ();
 void ConvertBW ();
 void invertImage();
-void darken_or_lighten(char x);
 void Merge();
 void flipImage(char direction);
+void darken_or_lighten(char x);
 void rotateImage(int a);
 
 int filter;
