@@ -194,13 +194,13 @@ void rotateImage(int a) {
         for (int i = 0; i < SIZE; ++i) {
             for (int j = 0; j < SIZE; ++j) {
                 int temp = image[i][j];
-                image[i][j] = image1[j][SIZE - i];
-                image1[j][SIZE - i] = temp;
+                image[i][j] = tmp[j][SIZE - i];
+                tmp[j][SIZE - i] = temp;
             }
         }
         for (int i = 0; i < SIZE; ++i) {
             for (int j = 0; j < SIZE; ++j) {
-                image[i][j] = image1[i][j];
+                image[i][j] = tmp[i][j];
             }
         }
     }
