@@ -165,7 +165,7 @@ void ConvertBW() {
     }
 }
 //_________________________________________
-void invert() {
+void invertImage() {
     for (int i = 0; i < SIZE; ++i) {
         for (int j = 0; j < SIZE; ++j) {
             image[i][j] = 255 - image[i][j]; // getting the complement of each pixel
@@ -240,7 +240,7 @@ void flipImage(char direction) {
     }
 }
 //_________________________________________
-void rotate(int degree) {
+void rotateImage(int degree) {
     // 90 degree rotation is done each time, degree/90 to see how many times we'll rotate the image.
     for (int x = 0; x < degree / 90; ++x) {
         for (int i = 0; i < SIZE; ++i) {
