@@ -30,49 +30,91 @@ void invertImage();
 void Merge();
 void flipImage(char direction);
 void darken_or_lighten(char x);
-void rotateImage(int a);
+void rotateImage(int degree);
 
-int filter;
+char filter;
+char type;
+
+//RGB filters
+void loadRGBImage ();
+void saveRGB();
+void convertRGBToBW();
+void invertRGBImage();
+void loadRGBMergeImage ();
+void MergeRGBImage();
+void flipRGBImage(char fl);
+void darken_or_lightenRGB(char mode);
+void rotateRGBImage(int degree);
+
 int main()
 {
     cout<<"Hello & Welcome to PerPixel! ^_-\n";
-    loadImage();
-    cout<<"Please select a filter to apply or 0 to exit:\n";
-    cout<<"     1- Black & White Filter\n";
-    cout<<"     2- Invert Filter\n";
-    cout<<"     3- Merge Filter\n";
-    cout<<"     4- Flip Image\n";
-    cout<<"     5- Darken and Lighten Image\n";
-    cout<<"     6- Rotate Image\n";
-    while (cin>>filter){
-        if (!filter){
-            break;
-        }else if (filter==1){
-            ConvertBW();
-        }else if (filter==2){
-            invertImage();
-        }else if (filter==3){
-            loadMergeImage ();
-            Merge();
-        }else if (filter==4){
-            cout<<"Flip (h)orizontally or (v)ertically ? ";
-            char fl;
-            cin>>fl;
-            flipImage(fl);
+    cout <<"==================================\n";
+    cout<<"What kind of images you will enter? (c)oloured or (g)ray: ";
+    cin>>type;
+    if (type=='g'){
+        loadImage();
+        interface();
+        while (cin>>filter){
+            if (filter=='0'||filter=='s'){
+                break;
+            }else if (filter=='1'){
+                ConvertBW();
+            }else if (filter=='2'){
+                invertImage();
+            }else if (filter=='3'){
+                loadMergeImage ();
+                Merge();
+            }else if (filter=='4'){
+                cout<<"Flip (h)orizontally or (v)ertically ? ";
+                char fl;
+                cin>>fl;
+                flipImage(fl);
+            }
+            else if(filter=='5'){
+                cout<<"if you want to darken the image press d and if you want to lighten it press l:";
+                cin>>m;
+                darken_or_lighten(m);
+            }else if(filter=='6'){
+                cout<<"Rotate (90), (180) or (270) degrees? ";
+                int deg;
+                cin>>deg;
+                rotateImage(deg);
+            }
         }
-        else if(filter==5){
-           cout<<"if you want to darken the image press d and if you want to lighten it press l:";
-            cin>>m;
-            darken_or_lighten(m);
+        saveImage();
+    }else{
+        loadRGBImage();
+        interface();
+        while (cin>>filter){
+            if (filter=='0'){
+                break;
+            }else if (filter=='1'){
+                convertRGBToBW();
+            }else if (filter=='2'){
+                invertRGBImage();
+            }else if (filter=='3'){
+                loadRGBMergeImage ();
+                MergeRGBImage();
+            }else if (filter=='4'){
+                cout<<"Flip (h)orizontally or (v)ertically ? ";
+                char fl;
+                cin>>fl;
+                flipRGBImage(fl);
+            }
+            else if(filter=='5'){
+                cout<<"if you want to darken the image press d and if you want to lighten it press l:";
+                cin>>m;
+                darken_or_lightenRGB(m);
+            }else if(filter=='6'){
+                cout<<"Rotate (90), (180) or (270) degrees? ";
+                int deg;
+                cin>>deg;
+                rotateRGBImage(deg);
+            }
         }
-        else if(filter==6){
-            cout << "Choose (1) tp rotate 90 degrees or (2) to rotate 180 degrees or (3) to rotate 270 degrees: ";
-            int angle = 0;
-            cin >> angle;
-            rotateImage(angle);
-        }
+        saveRGB();
     }
-    saveImage();
     return 0;
 }
 
@@ -88,7 +130,15 @@ void loadImage () {
     strcat (imageFileName, ".bmp");
     readGSBMP(imageFileName, image);
 }
-
+void interface(){
+    cout<<"Please select a filter to apply or 0 to exit:\n";
+    cout<<"     1- Black & White Filter\n";
+    cout<<"     2- Invert Filter\n";
+    cout<<"     3- Merge Filter\n";
+    cout<<"     4- Flip Image\n";
+    cout<<"     5- Darken and Lighten Image\n";
+    cout<<"     6- Rotate Image\n";
+}
 //_________________________________________
 void saveImage () {
     char imageFileName[100];
@@ -189,8 +239,8 @@ void flipImage(char direction) {
     }
 }
 //_________________________________________
-void rotateImage(int a) {
-    for (int x = 0; x < a; ++x) {
+void rotateImage(int degree) {
+    for (int x = 0; x < degree; ++x) {
         for (int i = 0; i < SIZE; ++i) {
             for (int j = 0; j < SIZE; ++j) {
                 int temp = image[i][j];
@@ -222,6 +272,50 @@ void darken_or_lighten(char x) {
                 } else{
                     image[i][j]=(255+image[i][j])/2;
                 }
+            }
+        }
+    }
+}
+
+
+//_____RGB FILTERS_____________________________
+void loadRGBImage () {
+    char imageFileName[100];
+
+    // Get gray scale image file name
+    cout << "Enter the source image file name: ";
+    cin >> imageFileName;
+
+    // Add to it .bmp extension and load image
+    strcat (imageFileName, ".bmp");
+    readRGBBMP(imageFileName, imageRGB);
+}
+void saveRGB(){
+    char imageFileName[100];
+
+    // Get gray scale image target file name
+    cout << "Enter the target image file name: ";
+    cin >> imageFileName;
+
+    // Add to it .bmp extension and load image
+    strcat (imageFileName, ".bmp");
+    writeRGBBMP(imageFileName, imageRGB);
+}
+void convertRGBToBW(){
+    for (int i = 0; i < SIZE; ++i) {
+        for (int j = 0; j < SIZE; ++j) {
+            unsigned char temp= imageRGB[i][j][0]+imageRGB[i][j][1]+imageRGB[i][j][2];
+//            imageRGB[i][j][0]+=(imageRGB[i][j][1]+imageRGB[i][j][2]);
+//            imageRGB[i][j][0]/=3;
+//            imageRGB[i][j][1]=0,imageRGB[i][j][2]=0;
+            if (temp<(unsigned char )384) {
+                imageRGB[i][j][0] = 0;
+                imageRGB[i][j][1] = 0;
+                imageRGB[i][j][2] = 0;
+            }else{
+                imageRGB[i][j][0] = 255;
+                imageRGB[i][j][1] = 255;
+                imageRGB[i][j][2] = 255;
             }
         }
     }
