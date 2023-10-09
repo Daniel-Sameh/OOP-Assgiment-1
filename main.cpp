@@ -168,7 +168,7 @@ void ConvertBW() {
 void invertImage() {
     for (int i = 0; i < SIZE; ++i) {
         for (int j = 0; j < SIZE; ++j) {
-            image[i][j] = 255 - image[i][j];
+            image[i][j] = 255 - image[i][j]; // getting the complement of each pixel
         }
     }
 }
@@ -262,17 +262,25 @@ void darken_or_lighten(char x) {
 }
 //_________________________________________
 void rotateImage(int degree) {
-    for (int x = 0; x < degree; ++x) {
+    // 90 degree rotation is done each time, degree/90 to see how many times we'll rotate the image.
+    for (int x = 0; x < degree / 90; ++x) {
         for (int i = 0; i < SIZE; ++i) {
             for (int j = 0; j < SIZE; ++j) {
-                int temp = image[i][j];
-                image[i][j] = tmp[j][SIZE - i];
-                tmp[j][SIZE - i] = temp;
+                int temp_pixel = image[i][j];
+                image[i][j] = temporary[j][SIZE - i];
+                temporary[j][SIZE - i] = temp_pixel;
             }
         }
+        /*
+         x y z           d a x
+         a b c    ===>   e b y
+         d e f           f c z
+         image[i][j] becomes image[j][SIZE-i]
+         we are swapping the pixels from image to temporary using temp_pixel.
+         */
         for (int i = 0; i < SIZE; ++i) {
             for (int j = 0; j < SIZE; ++j) {
-                image[i][j] = tmp[i][j];
+                image[i][j] = temporary[i][j]; // moving the rotated pixels from temporary to image again as it is the one used in the save function
             }
         }
     }
