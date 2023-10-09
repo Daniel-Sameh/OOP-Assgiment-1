@@ -180,14 +180,14 @@ void loadMergeImage () {
     cout << "Please enter the name of image file to merge with: ";
     cin >> imageFileName;
 
-
+//this function is used to load the second image you want to merge with the first image
     strcat(imageFileName, ".bmp");
     readGSBMP(imageFileName, merge);
 }
 void Merge() {
     for (int i = 0; i < SIZE; i++) {
         for (int j = 0; j< SIZE; j++) {
-            image[i][j]=(image[i][j]+merge[i][j])/2;
+            image[i][j]=(image[i][j]+merge[i][j])/2;//merging two images equals the average of each pixel in the both images
         }
     }
 
@@ -240,23 +240,6 @@ void flipImage(char direction) {
     }
 }
 //_________________________________________
-void rotateImage(int degree) {
-    for (int x = 0; x < degree; ++x) {
-        for (int i = 0; i < SIZE; ++i) {
-            for (int j = 0; j < SIZE; ++j) {
-                int temp = image[i][j];
-                image[i][j] = tmp[j][SIZE - i];
-                tmp[j][SIZE - i] = temp;
-            }
-        }
-        for (int i = 0; i < SIZE; ++i) {
-            for (int j = 0; j < SIZE; ++j) {
-                image[i][j] = tmp[i][j];
-            }
-        }
-    }
-}
-//_________________________________________
 void darken_or_lighten(char x) {
     if (x == 'd') {
         for (int i = 0; i < SIZE; ++i) {
@@ -277,7 +260,23 @@ void darken_or_lighten(char x) {
         }
     }
 }
-
+//_________________________________________
+void rotateImage(int degree) {
+    for (int x = 0; x < degree; ++x) {
+        for (int i = 0; i < SIZE; ++i) {
+            for (int j = 0; j < SIZE; ++j) {
+                int temp = image[i][j];
+                image[i][j] = tmp[j][SIZE - i];
+                tmp[j][SIZE - i] = temp;
+            }
+        }
+        for (int i = 0; i < SIZE; ++i) {
+            for (int j = 0; j < SIZE; ++j) {
+                image[i][j] = tmp[i][j];
+            }
+        }
+    }
+}
 
 //_____RGB FILTERS_____________________________
 void loadRGBImage () {
