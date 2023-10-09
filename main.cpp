@@ -1,7 +1,7 @@
-// Program: PerPixel.cpp
+// Program: PerPixel.cpp (Perfect Pixel)
 // Purpose: A program that manipulate the given
 //          bmp image and ask the user for the
-//          desired filter and saves the image at the end.
+//          desired filters and saves the image at the end.
 // Author:  Daniel Sameh 20221050, Michael Reda Moussa 20220517, Youssef Ehab 20220388
 // Date:    4 October 2023
 // Version: 1.0
@@ -14,8 +14,12 @@
 
 using namespace std;
 unsigned char image[SIZE][SIZE];
-unsigned char image1[SIZE][SIZE];
 unsigned char merge [SIZE][SIZE];
+unsigned char tmp[SIZE][SIZE],tmpRGB[SIZE][SIZE][RGB];
+unsigned char imageRGB[SIZE][SIZE][RGB];
+unsigned char mergeRGB[SIZE][SIZE][RGB];
+int dx[]={1,0,-1,0,1,-1,1,-1};
+int dy[]={0,1,0,-1,1,-1,-1,1};
 char m;
 
 void loadImage ();
@@ -143,10 +147,10 @@ void flipImage(char direction) {
         for (int i = 0; i < SIZE / 2; ++i) {
             for (int j = 0; j < SIZE; ++j) {
 
-                char tmp;
-                tmp = image[i][j];  //Storing the original pixel in temporary variable
+                char temp;
+                temp = image[i][j];  //Storing the original pixel in temporary variable
                 image[i][j] = image[SIZE - 1 - i][j]; //Putting in the orginal pixel the opposite one from down
-                image[SIZE - 1 - i][j] = tmp;
+                image[SIZE - 1 - i][j] = temp;
 
                 /*
                  * 00  01  02
@@ -164,10 +168,10 @@ void flipImage(char direction) {
         for (int i = 0; i < SIZE; ++i) {
             for (int j = 0; j < SIZE/2; ++j) {
 
-                char tmp;
-                tmp = image[i][j];
+                char temp;
+                temp = image[i][j];
                 image[i][j] = image[i][SIZE - 1 - j];
-                image[i][SIZE-1-j] = tmp;
+                image[i][SIZE-1-j] = temp;
 
             }
         }
