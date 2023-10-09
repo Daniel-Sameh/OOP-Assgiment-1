@@ -24,6 +24,7 @@ char m;
 
 void loadImage ();
 void loadMergeImage ();
+void interface();
 void saveImage ();
 void ConvertBW ();
 void invertImage();
