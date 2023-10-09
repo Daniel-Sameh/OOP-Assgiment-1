@@ -106,10 +106,10 @@ void saveImage () {
 void ConvertBW() {
     for (int i = 0; i < SIZE; i++) {
         for (int j = 0; j< SIZE; j++) {
-            if (image[i][j] >= 127)
-                image[i][j] = 255;
+            if (image[i][j] >= 127) //if pixel tends to white
+                image[i][j] = 255;  //Assign it to white (255)
             else
-                image[i][j] = 0;
+                image[i][j] = 0; //else black (0)
         }
     }
 }
