@@ -40,7 +40,7 @@ void enlargeImage(int x);
 void shrinkImage(char ratio);
 void mirrorImage(char d);
 void shuffleImage(const int sh[4]);
-void blurImage(int level);
+void blurImage();
 void cropImage(int x, int y, int l, int w);
 void skewHorizontally(double degree);
 void skewVertically(double degree);
@@ -121,10 +121,10 @@ int main()
                 cin>>i;
             shuffleImage(sh);
         }else if (filter=='c'){
-            cout<<"Blurring Intensity (1) to (10)? ";
-            int level;
-            cin>>level;
-            blurImage(level);
+           // cout<<"Blurring Intensity (1) to (10)? ";
+            //int level;
+            //cin>>level;
+            blurImage();
         }else if(filter=='d'){
             int x,y,l,w;
             cout<<"Please enter x y l w: ";
@@ -541,12 +541,13 @@ void shuffleImage(const int sh[4]) {
     }
 }
 //_____________________________________________
-void blurImage(int level){
+void blurImage(){
     for (int i = 0; i < SIZE; ++i) {
         for (int j = 0; j < SIZE; ++j) {
             tmp[i][j]=image[i][j];
         }
     }
+int level=5;
     while (level--){
         for (int i = 0; i < SIZE; ++i) {
             for (int j = 0; j < SIZE; ++j) {
