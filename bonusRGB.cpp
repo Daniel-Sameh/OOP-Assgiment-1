@@ -22,6 +22,7 @@ unsigned char mergeRGB[SIZE][SIZE][RGB];
 int dx[]={1,0,-1,0,1,-1,1,-1};
 int dy[]={0,1,0,-1,1,-1,-1,1};
 char m;
+char ratio;
 
 void loadImage ();
 void interface();
@@ -59,6 +60,7 @@ void darken_or_lightenRGB(char mode);
 void rotateRGBImage(int degree);
 void detectRGBEdges();
 void mirrorRGBImage(char dir);
+void shrinkRGBImage(char ratio);
 //void enlargeRGBImage(int x);
 
 
@@ -104,6 +106,11 @@ int main()
             detectRGBEdges();
         }else if (filter=='8'){
 
+        }
+        else if(filter=='9'){
+            cout<<"for (h)alf,for (t)hird,for (q)uarter";
+            cin>>ratio;
+            shrinkRGBImage( ratio );
         }
         else if (filter=='a'){
             cout<<"Mirror (l)eft, (r)ight, (u)pper, (d)own side? ";
@@ -813,3 +820,42 @@ void mirrorRGBImage(char d) {
     }
 }
 //___________________________________________
+void shrinkRGBImage(char ratio) {
+    if (ratio == 'h') {
+        for(int k=0;k<RGB;k++) {
+            for (int i = 0; i < SIZE; ++i) {
+                for (int j = 0; j < SIZE; ++j) {
+                    tmpRGB[i / 2][j / 2][k] = imageRGB[i][j][k];
+                }
+            }
+        }
+    } else if (ratio == 'q') {
+        for(int k=0;k<RGB;k++) {
+            for (int i = 0; i < SIZE; ++i) {
+                for (int j = 0; j < SIZE; ++j) {
+                    tmpRGB[i / 4][j / 4][k] = imageRGB[i][j][k];
+                }
+            }
+        }
+    } else if (ratio == 't') {
+        for(int k=0;k<RGB;k++) {
+            for (int i = 0; i < SIZE; ++i) {
+                for (int j = 0; j < SIZE; ++j) {
+                    tmpRGB[i / 3][j / 3][k] = imageRGB[i][j][k];
+                }
+            }
+        }
+    }
+    for(int k=0;k<RGB;k++) {
+        for (int i = 0; i < SIZE; ++i) {
+            for (int j = 0; j < SIZE; ++j) {
+                if (((ratio == 'h') && (i < SIZE / 2) && (j < SIZE / 2)) ||
+                    ((ratio == 't') && (i < SIZE / 3) && (j < SIZE / 3)) ||
+                    ((ratio == 'q') && (i < SIZE / 4) && (j < SIZE / 4)))
+                    imageRGB[i][j][k] = tmpRGB[i][j][k];
+                else
+                    imageRGB[i][j][k] = 255;
+            }
+        }
+    }
+}
