@@ -47,19 +47,6 @@ void skewVertically(double degree);
 char filter;
 char type;
 
-//RGB filters
-void loadRGBImage ();
-void saveRGB();
-void convertRGBToBW();
-void invertRGBImage();
-void loadRGBMergeImage ();
-void mergeRGBImage();
-void flipRGBImage(char fl);
-void darken_or_lightenRGB(char mode);
-void rotateRGBImage(int degree);
-void detectRGBEdges();
-
-
 int main()
 {
     cout<<"Hello & Welcome to PerPixel ^_-\n";
@@ -547,7 +534,7 @@ void blurImage(){
             tmp[i][j]=image[i][j];
         }
     }
-int level=5;
+    int level=5;
     while (level--){
         for (int i = 0; i < SIZE; ++i) {
             for (int j = 0; j < SIZE; ++j) {
