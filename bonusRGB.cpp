@@ -784,42 +784,6 @@ void detectRGBEdges(){
 
 }
 //___________________________________________
-void mirrorRGBImage(char d) {
-    if (tolower(d)=='r'){
-        for (int x = 0; x < RGB; ++x) {
-            for (int i = 0; i < SIZE; ++i) {
-                for (int j = 0; j < SIZE / 2; ++j) {
-                    imageRGB[i][j][x] = imageRGB[i][SIZE - 1 - j][x];
-                }
-            }
-        }
-    }else if (tolower(d)=='l'){
-        for (int x = 0; x < RGB; ++x) {
-            for (int i = 0; i < SIZE; ++i) {
-                for (int j = 0; j < SIZE / 2; ++j) {
-                    imageRGB[i][SIZE - 1 - j][x] = imageRGB[i][j][x];
-                }
-            }
-        }
-    }else if (tolower(d)=='u'){
-        for (int x = 0; x < RGB; ++x) {
-            for (int i = 0; i < SIZE / 2; ++i) {
-                for (int j = 0; j < SIZE; ++j) {
-                    imageRGB[SIZE - 1 - i][j][x] = imageRGB[i][j][x];
-                }
-            }
-        }
-    }else{
-        for (int x = 0; x < RGB; ++x) {
-            for (int i = 0; i < SIZE / 2; ++i) {
-                for (int j = 0; j < SIZE; ++j) {
-                    imageRGB[i][j][x] = imageRGB[SIZE - 1 - i][j][x];
-                }
-            }
-        }
-    }
-}
-//___________________________________________
 void shrinkRGBImage(char ratio) {
     if (ratio == 'h') {
         for(int k=0;k<RGB;k++) {
@@ -859,3 +823,41 @@ void shrinkRGBImage(char ratio) {
         }
     }
 }
+//___________________________________________
+void mirrorRGBImage(char d) {
+    if (tolower(d)=='r'){
+        for (int x = 0; x < RGB; ++x) {
+            for (int i = 0; i < SIZE; ++i) {
+                for (int j = 0; j < SIZE / 2; ++j) {
+                    imageRGB[i][j][x] = imageRGB[i][SIZE - 1 - j][x];
+                }
+            }
+        }
+    }else if (tolower(d)=='l'){
+        for (int x = 0; x < RGB; ++x) {
+            for (int i = 0; i < SIZE; ++i) {
+                for (int j = 0; j < SIZE / 2; ++j) {
+                    imageRGB[i][SIZE - 1 - j][x] = imageRGB[i][j][x];
+                }
+            }
+        }
+    }else if (tolower(d)=='u'){
+        for (int x = 0; x < RGB; ++x) {
+            for (int i = 0; i < SIZE / 2; ++i) {
+                for (int j = 0; j < SIZE; ++j) {
+                    imageRGB[SIZE - 1 - i][j][x] = imageRGB[i][j][x];
+                }
+            }
+        }
+    }else{
+        for (int x = 0; x < RGB; ++x) {
+            for (int i = 0; i < SIZE / 2; ++i) {
+                for (int j = 0; j < SIZE; ++j) {
+                    imageRGB[i][j][x] = imageRGB[SIZE - 1 - i][j][x];
+                }
+            }
+        }
+    }
+}
+//___________________________________________
+
