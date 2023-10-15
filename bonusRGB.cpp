@@ -61,6 +61,7 @@ void rotateRGBImage(int degree);
 void detectRGBEdges();
 void mirrorRGBImage(char dir);
 void shrinkRGBImage(char ratio);
+void cropRGBImage(int x, int y, int l, int w);
 //void enlargeRGBImage(int x);
 
 
@@ -116,6 +117,11 @@ int main()
             cout<<"Mirror (l)eft, (r)ight, (u)pper, (d)own side? ";
             cin>>m;
             mirrorRGBImage(m);
+        }
+        else if(filter=='d'){
+            int x,y,l,w;
+            cin>>x>>y>>l>>w;
+            cropRGBImage( x,  y,  l,  w);
         }
         else if (filter=='s')
             saveRGB();
@@ -860,4 +866,17 @@ void mirrorRGBImage(char d) {
     }
 }
 //___________________________________________
-
+void cropRGBImage(int x, int y, int l, int w) {
+    for (int k = 0; k < RGB; ++k) {
+        for (int i = 0; i < SIZE; ++i) {
+            for (int j = 0; j < SIZE; ++j) {
+                if (i < x || j < y)
+                    imageRGB[i][j][k] = 255;
+                else if (i > x + l || j > y + w)
+                    imageRGB[i][j][k] = 255;
+//            if (i<(x-(l/2))||i>(x+(l/2))||j<(y-(w/2))||j>(y+(w/2)))
+//                image[i][j]=255;
+            }
+        }
+    }
+}
