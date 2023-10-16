@@ -67,7 +67,6 @@ int main()
         }else if (filter=='2'){
             invertImage();
         }else if (filter=='3'){
-            loadMergeImage ();
             Merge();
         }else if (filter=='4'){
             cout<<"Flip (h)orizontally or (v)ertically ? ";
@@ -220,6 +219,7 @@ void loadMergeImage () {
     readGSBMP(imageFileName, merge);
 }
 void Merge() {
+    loadMergeImage ();
     for (int i = 0; i < SIZE; i++) {
         for (int j = 0; j< SIZE; j++) {
             image[i][j]=(image[i][j]+merge[i][j])/2;
