@@ -43,6 +43,8 @@ void mirrorRGBImage(char dir);
 void shrinkRGBImage(char ratio);
 void cropRGBImage(int x, int y, int l, int w);
 //void enlargeRGBImage(int x);
+void blurRGBImage();
+void shuffleRGBImage(const int sh[4]);
 
 
 int main()
@@ -97,6 +99,16 @@ int main()
             cout<<"Mirror (l)eft, (r)ight, (u)pper, (d)own side? ";
             cin>>m;
             mirrorRGBImage(m);
+        }
+        else if (filter=='b'){
+            int sh[4];
+            cout<<"Enter the new order of quarters: ";
+            for (int & i : sh)
+                cin>>i;
+            shuffleRGBImage(sh);
+        }
+        else if(filter == 'c'){
+            blurRGBImage();
         }
         else if(filter=='d'){
             int x,y,l,w;
@@ -413,5 +425,92 @@ void cropRGBImage(int x, int y, int l, int w) {
 //                image[i][j]=255;
             }
         }
+    }
+}
+//___________________________________________
+void blurRGBImage(){
+    for (int x = 0; x < 5; ++x) { //repeating the blur process 5 times
+        for (int k = 0; k < RGB; ++k) { //looping on each color
+            for (int i = 0; i < SIZE; ++i) { //looping on each row
+                for (int j = 0; j < SIZE; ++j) { //looping on each column
+                    //declaring some variables expressing the neighbor pixels
+                    unsigned char up = imageRGB[i - 1][j][k], down = imageRGB[i + 1][j][k];
+                    unsigned char left = imageRGB[i][j - 1][k], right = imageRGB[i][j + 1][k];
+                    unsigned char upper_left = imageRGB[i - 1][j - 1][k], upper_right = imageRGB[i - 1][j + 1][k];
+                    unsigned char bottom_left = imageRGB[i + 1][j - 1][k], bottom_right = imageRGB[i + 1][j + 1][k];
+                    // getting the average of the surrounding pixels
+                    // if the pixel is at any corner the surrounding pixels are 3
+                    if (i == 0 && j == 0)
+                        tmpRGB[i][j][k] = (down + bottom_right + right) / 3;
+                    else if (i == 0 && j == 255)
+                        tmpRGB[i][j][k] = (left + down + bottom_left) / 3;
+                    else if (i == 255 && j == 0)
+                        tmpRGB[i][j][k] = (up + right + upper_right) / 3;
+                    else if (i == 255 && j == 255)
+                        tmpRGB[i][j][k] = (up + left + upper_left) / 3;
+                    // if the pixel is at the top or bottom row or the most left or right column the surrounding pixels are 5
+                    else if (i == 0)
+                        tmpRGB[i][j][k] = (down + bottom_right + bottom_left + right + left) / 5;
+                    else if (i == 255)
+                        tmpRGB[i][j][k] = (up + right + left + upper_left + upper_right) / 5;
+                    else if (j == 0)
+                        tmpRGB[i][j][k] = (up + down + right + upper_right + bottom_right) / 5;
+                    else if (j == 255)
+                        tmpRGB[i][j][k] = (up + down + left + upper_left + bottom_left) / 5;
+                    // any other pixel will have 8 surrounding pixels
+                    else
+                        tmpRGB[i][j][k] =
+                                (up + down + right + left + upper_right + upper_left + bottom_right + bottom_left) / 8;
+                }
+            }
+        }
+        //copying the pixels from tmp to the original image
+        for (int k = 0; k < RGB; ++k)
+            for (int i = 0; i < SIZE; ++i)
+                for (int j = 0; j < SIZE; ++j)
+                    imageRGB[i][j][k] = tmpRGB[i][j][k];
+    }
+}
+//___________________________________________
+void shuffleRGBImage(const int sh[4]){
+    // starting points and ending points to be filled
+    int i , j , i_end, j_end;
+    // starting points and ending points to take from
+    int it1 , it2, it1_end, it2_end;
+
+    //setting initial values for quarters we want to fill
+    for(int turn = 1; turn <= 4; ++turn) {
+        //rows of first quarter and second quarter starts at zero else the third and fourth starts from SIZE / 2
+        i = (turn == 1 || turn == 2) ? 0 : SIZE / 2;
+        //columns of first quarter and third quarter starts at zero else the second and the fourth start at SIZE / 2
+        j = (turn == 1 || turn == 3) ? 0 : SIZE / 2;
+        //rows of first quarter and second quarter end at SIZE /2  else the third and fourth end at SIZE
+        i_end = (turn == 1 || turn == 2) ? SIZE / 2 : SIZE;
+        //columns of first quarter and third quarter end at 127 else the second and fourth end at 256
+        j_end = (turn == 1 || turn == 3) ? SIZE / 2 : SIZE;
+
+        //setting the values of where we will take from with the same logic above
+        it1 = (sh[turn - 1] == 1 || sh[turn - 1] == 2) ? 0 : SIZE / 2;
+        it2 = (sh[turn - 1] == 1 || sh[turn - 1] == 3) ? 0 : SIZE / 2;
+        it1_end = (sh[turn - 1] == 1 || sh[turn - 1] == 2) ? SIZE / 2 : SIZE;
+        it2_end = (sh[turn - 1] == 1 || sh[turn - 1] == 3) ? SIZE / 2 : SIZE;
+
+        //copying quarters
+        for (int p = 0; p < RGB; ++p) {
+            it1 = (sh[turn - 1] == 1 || sh[turn - 1] == 2) ? 0 : SIZE / 2;//reset it1 at the start of each color
+            for (int f = i; f < i_end; ++f) {
+                it2 = (sh[turn - 1] == 1 || sh[turn - 1] == 3) ? 0 : SIZE / 2; // Reset it2 at the start of each row
+                for (int g = j; g < j_end; ++g) {
+                    tmpRGB[f][g][p] = imageRGB[it1][it2][p];
+                    ++it2;
+                }
+                ++it1;
+            }
+        }
+    }
+    for (int p = 0; p < RGB; ++p) {
+        for (int x = 0; x < SIZE; ++x)
+            for (int y = 0; y < SIZE; ++y)
+                imageRGB[x][y][p] = tmpRGB[x][y][p];
     }
 }
