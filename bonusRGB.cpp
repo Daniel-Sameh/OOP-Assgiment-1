@@ -1,10 +1,10 @@
-// Program: CS213-2023-20221050-20220517-20220388-A1-Part1.cpp
-// Purpose: A program that manipulate the given
-//          bmp image and ask the user for the
-//          desired filters and saves the image at the end.
+// Program: CS213-2023-S20-20221050-20220517-20220388-A1Bonus.cpp
+// Purpose: A program that manipulate and process the given
+//          RGB bmp image and ask the user for the
+//          desired filters or save the image or exit the program.
 // Author:  Daniel Sameh 20221050, Michael Reda Moussa 20220517, Youssef Ehab 20220388
 // Date:    4 October 2023
-// Version: 1.0
+// Version: 2.0
 
 
 #include <iostream>
@@ -14,10 +14,8 @@
 #include "bmplib.cpp"
 
 using namespace std;
-unsigned char image[SIZE][SIZE];
-unsigned char merge [SIZE][SIZE];
-unsigned char tmp[SIZE][SIZE],tmpRGB[SIZE][SIZE][RGB];
 unsigned char imageRGB[SIZE][SIZE][RGB];
+unsigned char tmpRGB[SIZE][SIZE][RGB];
 unsigned char mergeRGB[SIZE][SIZE][RGB];
 int dx[]={1,0,-1,0,1,-1,1,-1};
 int dy[]={0,1,0,-1,1,-1,-1,1};
@@ -35,16 +33,18 @@ void convertRGBToBW();
 void invertRGBImage();
 void loadRGBMergeImage ();
 void mergeRGBImage();
-void flipRGBImage(char fl);
+void flipRGBImage(char direction);
 void darken_or_lightenRGB(char mode);
 void rotateRGBImage(int degree);
 void detectRGBEdges();
+void enlargeRGBImage(int x);
 void mirrorRGBImage(char dir);
+void shuffleRGBImage(const int sh[4]);
+void blurRGBImage();
 void shrinkRGBImage(char ratio);
 void cropRGBImage(int x, int y, int l, int w);
-//void enlargeRGBImage(int x);
-void blurRGBImage();
-void shuffleRGBImage(const int sh[4]);
+void skewRGBHorizontally(double degree);
+void skewRGBVertically(double degree);
 
 
 int main()
@@ -68,7 +68,6 @@ int main()
         }else if (filter=='2'){
             invertRGBImage();
         }else if (filter=='3'){
-            loadRGBMergeImage();
             mergeRGBImage();
         }else if (filter=='4'){
             cout<<"Flip (h)orizontally or (v)ertically ? ";
@@ -88,7 +87,10 @@ int main()
         }else if (filter=='7'){
             detectRGBEdges();
         }else if (filter=='8'){
-
+            cout<<"Which quarter to enlarge 1, 2, 3 or 4? ";
+            int x;
+            cin>>x;
+            enlargeRGBImage(x);
         }
         else if(filter=='9'){
             cout<<"for (h)alf,for (t)hird,for (q)uarter";
@@ -99,23 +101,30 @@ int main()
             cout<<"Mirror (l)eft, (r)ight, (u)pper, (d)own side? ";
             cin>>m;
             mirrorRGBImage(m);
-        }
-        else if (filter=='b'){
+        }else if (filter=='b'){
             int sh[4];
             cout<<"Enter the new order of quarters: ";
             for (int & i : sh)
                 cin>>i;
             shuffleRGBImage(sh);
-        }
-        else if(filter == 'c'){
+        }else if (filter=='c'){
             blurRGBImage();
-        }
-        else if(filter=='d'){
+        }else if(filter=='d'){
             int x,y,l,w;
+            cout<<"Please enter x y l w: ";
             cin>>x>>y>>l>>w;
             cropRGBImage( x,  y,  l,  w);
-        }
-        else if (filter=='s')
+        }else if (filter=='e'){
+            cout<<"Please enter degree to skew right: ";
+            double deg;
+            cin>>deg;
+            skewRGBHorizontally(deg);
+        }else if (filter=='f'){
+            cout<<"Please enter degree to skew up: ";
+            double deg;
+            cin>>deg;
+            skewRGBVertically(deg);
+        }else if (filter=='s')
             saveRGB();
     }
 
@@ -212,6 +221,7 @@ void loadRGBMergeImage () {
     readRGBBMP(imageFileName, mergeRGB);
 }
 void mergeRGBImage() {
+    loadRGBMergeImage();
     for (int x = 0; x < RGB; ++x) {
         for (int i = 0; i < SIZE; i++) {
             for (int j = 0; j < SIZE; j++) {
@@ -318,23 +328,94 @@ void detectRGBEdges(){
                 for (int k = 0; k < 4; ++k) {
                     int nx = dx[k] + i, ny = dy[k] + j;
                     if (nx >= 0 && nx < SIZE && ny >= 0 && ny < SIZE) {
-                        int x=0;
-                        for (int l = 0; l < RGB; ++l)
-                            x=abs(tmpRGB[i][j][l] - tmpRGB[nx][ny][l]);
-                        if (x > 40) {
-                            imageRGB[nx][ny][0] = 0,imageRGB[nx][ny][1]=0;
-                            imageRGB[nx][ny][2]=0;
-//                        break;
-                        } else if (imageRGB[nx][ny][0]+imageRGB[nx][ny][1]+imageRGB[nx][ny][2] != 0)
-                            imageRGB[nx][ny][0] = 255,imageRGB[nx][ny][1]=255,imageRGB[nx][ny][2]=255;
-                        else
-                            imageRGB[nx][ny][0] =0,imageRGB[nx][ny][1]=0,imageRGB[nx][ny][2]=0;
+                        int check1= imageRGB[i][j][0]+imageRGB[i][j][1]+imageRGB[i][j][2];
+                        int check2= imageRGB[nx][ny][0]+imageRGB[nx][ny][1]+imageRGB[nx][ny][2];
+                        if (abs(check1-check2) > 40) {
+                            tmpRGB[i][j][0] = 0;
+                            tmpRGB[i][j][1] = 0;
+                            tmpRGB[i][j][2] = 0;
+                        } else if (check2 != 0) {
+                            tmpRGB[i][j][0] = 255;
+                            tmpRGB[i][j][1] = 255;
+                            tmpRGB[i][j][2] = 255;
+                        }else
+                            tmpRGB[i][j][0] = 0,tmpRGB[i][j][1] = 0,tmpRGB[i][j][2] = 0;
                     }
                 }
             }
         }
 //    }
-
+    for (int x = 0; x < RGB; ++x) {
+        for (int i = 0; i < SIZE; ++i) {
+            for (int j = 0; j < SIZE; ++j) {
+                imageRGB[i][j][x] = tmpRGB[i][j][x];
+            }
+        }
+    }
+}
+//___________________________________________
+void enlargeRGBImage(int x){
+    if(x==1) {
+        for(int k = 0 ; k < RGB ; ++k) {
+            for (int i = 0; i < SIZE / 2; ++i) {
+                for (int j = 0; j < SIZE / 2; ++j) {
+                    tmpRGB[i][j][k] = imageRGB[i][j][k];
+                }
+            }
+        }
+        for(int k = 0 ; k < RGB ; ++k) {
+            for (int i = 0; i < SIZE; ++i) {
+                for (int j = 0; j < SIZE; ++j) {
+                    imageRGB[i][j][k] = tmpRGB[(i / 2)][(j / 2)][k];
+                }
+            }
+        }
+    }else if(x==2){
+        for(int k = 0 ; k < RGB ; ++k) {
+            for (int i = 0; i < SIZE / 2; ++i) {
+                for (int j = SIZE / 2; j < SIZE; ++j) {
+                    tmpRGB[i][j][k] = imageRGB[i][j][k];
+                }
+            }
+        }
+        for(int k = 0 ; k < RGB ; ++k) {
+            for (int i = 0; i < SIZE; ++i) {
+                for (int j = 0; j < SIZE; ++j) {
+                    imageRGB[i][j][k] = tmpRGB[(i / 2)][(j / 2) - (SIZE / 2)][k];
+                }
+            }
+        }
+    }else if(x==3){
+        for(int k = 0 ; k < RGB ; ++k) {
+            for (int i = 0; i < SIZE / 2; ++i) {
+                for (int j = 0; j < SIZE / 2; ++j) {
+                    tmpRGB[i][j][k] = imageRGB[i + (SIZE / 2)][j][k];
+                }
+            }
+        }
+        for(int k = 0 ; k < RGB ; ++k) {
+            for (int i = 0; i < SIZE; ++i) {
+                for (int j = 0; j < SIZE; ++j) {
+                    imageRGB[i][j][k] = tmpRGB[i / 2][j / 2][k];
+                }
+            }
+        }
+    }else if(x==4){
+        for(int k = 0 ; k < RGB ; ++k) {
+            for (int i = 0; i < SIZE / 2; ++i) {
+                for (int j = 0; j < SIZE / 2; ++j) {
+                    tmpRGB[i][j][k] = imageRGB[(SIZE / 2) + i][(SIZE / 2) + j][k];
+                }
+            }
+        }
+        for(int k = 0 ; k < RGB ; ++k) {
+            for (int i = 0; i < SIZE; ++i) {
+                for (int j = 0; j < SIZE; ++j) {
+                    imageRGB[i][j][k] = tmpRGB[i / 2][j / 2][k];
+                }
+            }
+        }
+    }
 }
 //___________________________________________
 void shrinkRGBImage(char ratio) {
@@ -413,65 +494,6 @@ void mirrorRGBImage(char d) {
     }
 }
 //___________________________________________
-void cropRGBImage(int x, int y, int l, int w) {
-    for (int k = 0; k < RGB; ++k) {
-        for (int i = 0; i < SIZE; ++i) {
-            for (int j = 0; j < SIZE; ++j) {
-                if (i < x || j < y)
-                    imageRGB[i][j][k] = 255;
-                else if (i > x + l || j > y + w)
-                    imageRGB[i][j][k] = 255;
-//            if (i<(x-(l/2))||i>(x+(l/2))||j<(y-(w/2))||j>(y+(w/2)))
-//                image[i][j]=255;
-            }
-        }
-    }
-}
-//___________________________________________
-void blurRGBImage(){
-    for (int x = 0; x < 5; ++x) { //repeating the blur process 5 times
-        for (int k = 0; k < RGB; ++k) { //looping on each color
-            for (int i = 0; i < SIZE; ++i) { //looping on each row
-                for (int j = 0; j < SIZE; ++j) { //looping on each column
-                    //declaring some variables expressing the neighbor pixels
-                    unsigned char up = imageRGB[i - 1][j][k], down = imageRGB[i + 1][j][k];
-                    unsigned char left = imageRGB[i][j - 1][k], right = imageRGB[i][j + 1][k];
-                    unsigned char upper_left = imageRGB[i - 1][j - 1][k], upper_right = imageRGB[i - 1][j + 1][k];
-                    unsigned char bottom_left = imageRGB[i + 1][j - 1][k], bottom_right = imageRGB[i + 1][j + 1][k];
-                    // getting the average of the surrounding pixels
-                    // if the pixel is at any corner the surrounding pixels are 3
-                    if (i == 0 && j == 0)
-                        tmpRGB[i][j][k] = (down + bottom_right + right) / 3;
-                    else if (i == 0 && j == 255)
-                        tmpRGB[i][j][k] = (left + down + bottom_left) / 3;
-                    else if (i == 255 && j == 0)
-                        tmpRGB[i][j][k] = (up + right + upper_right) / 3;
-                    else if (i == 255 && j == 255)
-                        tmpRGB[i][j][k] = (up + left + upper_left) / 3;
-                    // if the pixel is at the top or bottom row or the most left or right column the surrounding pixels are 5
-                    else if (i == 0)
-                        tmpRGB[i][j][k] = (down + bottom_right + bottom_left + right + left) / 5;
-                    else if (i == 255)
-                        tmpRGB[i][j][k] = (up + right + left + upper_left + upper_right) / 5;
-                    else if (j == 0)
-                        tmpRGB[i][j][k] = (up + down + right + upper_right + bottom_right) / 5;
-                    else if (j == 255)
-                        tmpRGB[i][j][k] = (up + down + left + upper_left + bottom_left) / 5;
-                    // any other pixel will have 8 surrounding pixels
-                    else
-                        tmpRGB[i][j][k] =
-                                (up + down + right + left + upper_right + upper_left + bottom_right + bottom_left) / 8;
-                }
-            }
-        }
-        //copying the pixels from tmp to the original image
-        for (int k = 0; k < RGB; ++k)
-            for (int i = 0; i < SIZE; ++i)
-                for (int j = 0; j < SIZE; ++j)
-                    imageRGB[i][j][k] = tmpRGB[i][j][k];
-    }
-}
-//___________________________________________
 void shuffleRGBImage(const int sh[4]){
     // starting points and ending points to be filled
     int i , j , i_end, j_end;
@@ -513,4 +535,124 @@ void shuffleRGBImage(const int sh[4]){
             for (int y = 0; y < SIZE; ++y)
                 imageRGB[x][y][p] = tmpRGB[x][y][p];
     }
+}
+//___________________________________________
+void blurRGBImage(){
+    for (int x = 0; x < 5; ++x) { //repeating the blur process 5 times
+        for (int k = 0; k < RGB; ++k) { //looping on each color
+            for (int i = 0; i < SIZE; ++i) { //looping on each row
+                for (int j = 0; j < SIZE; ++j) { //looping on each column
+                    //declaring some variables expressing the neighbor pixels
+                    unsigned char up = imageRGB[i - 1][j][k], down = imageRGB[i + 1][j][k];
+                    unsigned char left = imageRGB[i][j - 1][k], right = imageRGB[i][j + 1][k];
+                    unsigned char upper_left = imageRGB[i - 1][j - 1][k], upper_right = imageRGB[i - 1][j + 1][k];
+                    unsigned char bottom_left = imageRGB[i + 1][j - 1][k], bottom_right = imageRGB[i + 1][j + 1][k];
+                    // getting the average of the surrounding pixels
+                    // if the pixel is at any corner the surrounding pixels are 3
+                    if (i == 0 && j == 0)
+                        tmpRGB[i][j][k] = (down + bottom_right + right) / 3;
+                    else if (i == 0 && j == 255)
+                        tmpRGB[i][j][k] = (left + down + bottom_left) / 3;
+                    else if (i == 255 && j == 0)
+                        tmpRGB[i][j][k] = (up + right + upper_right) / 3;
+                    else if (i == 255 && j == 255)
+                        tmpRGB[i][j][k] = (up + left + upper_left) / 3;
+                        // if the pixel is at the top or bottom row or the most left or right column the surrounding pixels are 5
+                    else if (i == 0)
+                        tmpRGB[i][j][k] = (down + bottom_right + bottom_left + right + left) / 5;
+                    else if (i == 255)
+                        tmpRGB[i][j][k] = (up + right + left + upper_left + upper_right) / 5;
+                    else if (j == 0)
+                        tmpRGB[i][j][k] = (up + down + right + upper_right + bottom_right) / 5;
+                    else if (j == 255)
+                        tmpRGB[i][j][k] = (up + down + left + upper_left + bottom_left) / 5;
+                        // any other pixel will have 8 surrounding pixels
+                    else
+                        tmpRGB[i][j][k] =
+                                (up + down + right + left + upper_right + upper_left + bottom_right + bottom_left) / 8;
+                }
+            }
+        }
+        //copying the pixels from tmp to the original image
+        for (int k = 0; k < RGB; ++k)
+            for (int i = 0; i < SIZE; ++i)
+                for (int j = 0; j < SIZE; ++j)
+                    imageRGB[i][j][k] = tmpRGB[i][j][k];
+    }
+}
+//___________________________________________
+void cropRGBImage(int x, int y, int l, int w) {
+    for (int k = 0; k < RGB; ++k) {
+        for (int i = 0; i < SIZE; ++i) {
+            for (int j = 0; j < SIZE; ++j) {
+                if (i < x || j < y)
+                    imageRGB[i][j][k] = 255;
+                else if (i > x + l || j > y + w)
+                    imageRGB[i][j][k] = 255;
+//            if (i<(x-(l/2))||i>(x+(l/2))||j<(y-(w/2))||j>(y+(w/2)))
+//                image[i][j]=255;
+            }
+        }
+    }
+}
+//___________________________________________
+void skewRGBHorizontally(double degree){
+    double radian= degree*(M_PI/180);
+    double shift= SIZE*tan(radian);
+    double minus= shift/SIZE;
+    double originalShift=shift;
+
+    unsigned char shiftImage[SIZE][SIZE+(int)shift][RGB];
+    for (int k = 0; k < RGB; ++k)
+        for (int i = 0; i < SIZE; ++i)
+            for (int j = 0; j < SIZE+shift; ++j)
+                shiftImage[i][j][k]=255;
+    for (int k = 0; k < RGB; ++k) {
+        for (int i = 0; i < SIZE; ++i) {
+            for (int j = 0; j < SIZE; ++j) {
+                shiftImage[i][j + (int) shift][k] = imageRGB[i][j][k];
+            }
+            shift -= minus;
+        }
+        shift=originalShift;
+    }
+    double div=(SIZE+originalShift)/SIZE;
+    for (int k = 0; k < RGB; ++k) {
+        for (int i = 0; i < SIZE; ++i) {
+            for (int j = 0; j < SIZE + (int) originalShift; ++j) {
+                imageRGB[i][(int) (j / div)][k] = shiftImage[i][j][k];
+            }
+        }
+    }
+}
+void skewRGBVertically(double degree){
+    double radian= degree*(M_PI/180);
+    double shift= SIZE*tan(radian);
+    double minus= shift/SIZE;
+    double originalShift=shift;
+
+    unsigned char shiftImage[SIZE+(int)shift][SIZE][RGB];
+    for (int k = 0; k < RGB; ++k)
+        for (int i = 0; i < SIZE+(int)shift; ++i)
+            for (int j = 0; j < SIZE; ++j)
+                shiftImage[i][j][k]=255;
+    for (int k = 0; k < RGB; ++k) {
+        for (int i = 0; i < SIZE; ++i) {
+            for (int j = 0; j < SIZE; ++j) {
+                shiftImage[(int) (j + shift)][i][k] = imageRGB[j][i][k];
+            }
+            shift -= minus;
+        }
+        shift=originalShift;
+    }
+    double div=(SIZE+originalShift)/SIZE;
+    for (int k = 0; k < RGB; ++k) {
+        for (int i = 0; i < SIZE + (int) originalShift; ++i) {
+            for (int j = 0; j < SIZE; ++j) {
+                double idx = (i / div);
+                imageRGB[(int) idx][j][k] = shiftImage[i][j][k];
+            }
+        }
+    }
+
 }
